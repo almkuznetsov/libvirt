@@ -275,18 +275,6 @@ virNetSocketNew(virSocketAddr *localAddr,
     sock->isClient = isClient;
     sock->unlinkUNIX = unlinkUNIX;
 
-    /* Disable nagle for TCP sockets */
-    if (sock->localAddr.data.sa.sa_family == AF_INET ||
-        sock->localAddr.data.sa.sa_family == AF_INET6) {
-        if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY,
-                       &no_slow_start,
-                       sizeof(no_slow_start)) < 0) {
-            virReportSystemError(errno, "%s",
-                                 _("Unable to disable nagle algorithm"));
-            goto error;
-        }
-    }
-
 
     if (localAddr &&
         !(sock->localAddrStrSASL = virSocketAddrFormatFull(localAddr, true, ";")))
